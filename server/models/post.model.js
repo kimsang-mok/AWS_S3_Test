@@ -3,14 +3,10 @@ import mongoose from "mongoose";
 const postSchema = new mongoose.Schema({
   photo: {
     type: String,
-    required: true,
   },
   caption: {
     type: String,
     required: true,
-  },
-  imageUrl: {
-    type: String,
   },
 });
 

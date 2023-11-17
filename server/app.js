@@ -6,6 +6,7 @@ import {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import Post from "./models/post.model.js";
 import crypto from "crypto";
@@ -99,6 +100,21 @@ app.get("/api/posts", async (req, res) => {
     post.imageUrl = url;
   }
   res.send(posts);
+});
+
+app.delete("/api/posts/:id", async (req, res) => {
+  console.log(req.params);
+  const post = await Post.findById(req.params.id);
+  console.log(post);
+  const deleteParams = {
+    Bucket: BUCKET_NAME,
+    Key: "tests/" + post.photo,
+  };
+  const command = new DeleteObjectCommand(deleteParams);
+  await s3.send(command);
+  post.photo = "";
+  const deletedPost = await post.save();
+  res.status(200).json(deletedPost);
 });
 
 app.listen(PORT, () => {
